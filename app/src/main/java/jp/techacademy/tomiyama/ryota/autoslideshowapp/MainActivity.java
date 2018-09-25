@@ -89,83 +89,88 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View view) {
-        int v_id = view.getId();
 
-        switch (v_id){
-            case R.id.back:
-                // 戻るボタンの処理
-                if (cursor.moveToPrevious()) {
-                    imageView.setImageURI(getImageUri());
-                } else {
-                    // 戻ることができなかった場合
-                    cursor.moveToLast();
-                    imageView.setImageURI(getImageUri());
-                }
+        if(cursor!=null){
 
-                textView2.setText("");
+            int v_id = view.getId();
 
-                break;
-            case R.id.playStop:
-                // 再生の処理
-                // ①送りボタン，戻るボタンをタップ不可に
-                // ②文字の変更
-                if(mTimer == null){
-                    textView2.setText("スライドショー再生中！");
-                    mTimer = new Timer();
-                    mTimer.schedule(new TimerTask() {
-                        @Override
-                        public void run() {
-
-                            if(!cursor.moveToNext()) cursor.moveToFirst();
-
-                            mHandler.post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    imageView.setImageURI(getImageUri());
-                                    Log.d("ANDROID_Timer内", "URI : " + getImageUri().toString());
-                                    textView.setText(getImageUri().toString());
-
-                                }
-                            });
-                        }
-                    }, 2000, 2000);
-
-                    playStopButton.setText("停止");
-                    backButton.setEnabled(false);
-                    forwardButton.setEnabled(false);
-
-                }else{
-                    // 停止の処理
-                    // 停止ボタンを押すと，スライドショー停止になる．
-                    // 送りボタンと戻るボタンをタップ可能に
-                    mTimer.cancel();
-                    mTimer = null;
-
-                    playStopButton.setText("再生");
-                    backButton.setEnabled(true);
-                    forwardButton.setEnabled(true);
+            switch (v_id){
+                case R.id.back:
+                    // 戻るボタンの処理
+                    if (cursor.moveToPrevious()) {
+                        imageView.setImageURI(getImageUri());
+                    } else {
+                        // 戻ることができなかった場合
+                        cursor.moveToLast();
+                        imageView.setImageURI(getImageUri());
+                    }
 
                     textView2.setText("");
 
-                }
+                    break;
+                case R.id.playStop:
+                    // 再生の処理
+                    // ①送りボタン，戻るボタンをタップ不可に
+                    // ②文字の変更
+                    if(mTimer == null){
+                        textView2.setText("スライドショー再生中！");
+                        mTimer = new Timer();
+                        mTimer.schedule(new TimerTask() {
+                            @Override
+                            public void run() {
 
-                break;
+                                if(!cursor.moveToNext()) cursor.moveToFirst();
 
-            case R.id.forward:
-                // 進むボタンの処理
+                                mHandler.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        imageView.setImageURI(getImageUri());
+                                        Log.d("ANDROID_Timer内", "URI : " + getImageUri().toString());
+                                        textView.setText(getImageUri().toString());
 
-                // 進むことができなかったときの処理
-                if(!cursor.moveToNext()) cursor.moveToFirst();
+                                    }
+                                });
+                            }
+                        }, 2000, 2000);
 
-                imageView.setImageURI(getImageUri());
+                        playStopButton.setText("停止");
+                        backButton.setEnabled(false);
+                        forwardButton.setEnabled(false);
 
-                textView2.setText("");
+                    }else{
+                        // 停止の処理
+                        // 停止ボタンを押すと，スライドショー停止になる．
+                        // 送りボタンと戻るボタンをタップ可能に
+                        mTimer.cancel();
+                        mTimer = null;
 
-                break;
+                        playStopButton.setText("再生");
+                        backButton.setEnabled(true);
+                        forwardButton.setEnabled(true);
+
+                        textView2.setText("");
+
+                    }
+
+                    break;
+
+                case R.id.forward:
+                    // 進むボタンの処理
+
+                    // 進むことができなかったときの処理
+                    if(!cursor.moveToNext()) cursor.moveToFirst();
+
+                    imageView.setImageURI(getImageUri());
+
+                    textView2.setText("");
+
+                    break;
+            }
+
+            Log.d("ANDROID", "URI : " + getImageUri().toString()); // 表示する
+            textView.setText(getImageUri().toString());
         }
 
-        Log.d("ANDROID", "URI : " + getImageUri().toString()); // 表示する
-        textView.setText(getImageUri().toString());
 
     }
 
