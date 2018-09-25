@@ -222,6 +222,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             mTimer = null;
         }
 
-        cursor.close();
+        if(cursor != null){
+            cursor.close();
+        }
+
     }
 }
