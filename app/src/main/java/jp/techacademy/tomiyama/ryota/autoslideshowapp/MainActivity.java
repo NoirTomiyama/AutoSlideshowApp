@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -27,12 +28,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private ImageView imageView;
 
     private Timer mTimer;
-
     private Handler mHandler = new Handler();
 
     private Button backButton;
     private Button playStopButton;
     private Button forwardButton;
+
+    private TextView textView;
+    private TextView textView2;
 
 
     @Override
@@ -45,10 +48,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         forwardButton = findViewById(R.id.forward);
 
         imageView = findViewById(R.id.imageView);
+        textView = findViewById(R.id.textView);
+        textView2 = findViewById(R.id.textView2);
 
         backButton.setOnClickListener(this);
         playStopButton.setOnClickListener(this);
         forwardButton.setOnClickListener(this);
+
 
         // Android 6.0以降の場合
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -96,15 +102,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     imageView.setImageURI(getImageUri());
                 }
 
+                textView2.setText("");
+
                 break;
             case R.id.playStop:
-                // TODO 再生/停止ボタンの処理
-
                 // 再生の処理
                 // ①送りボタン，戻るボタンをタップ不可に
                 // ②文字の変更
-                // ③停止ボタンを押すと，再生になる．
                 if(mTimer == null){
+                    textView2.setText("スライドショー再生中！");
                     mTimer = new Timer();
                     mTimer.schedule(new TimerTask() {
                         @Override
@@ -117,6 +123,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                 public void run() {
                                     imageView.setImageURI(getImageUri());
                                     Log.d("ANDROID_Timer内", "URI : " + getImageUri().toString());
+                                    textView.setText(getImageUri().toString());
 
                                 }
                             });
@@ -129,12 +136,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 }else{
                     // 停止の処理
+                    // 停止ボタンを押すと，スライドショー停止になる．
+                    // 送りボタンと戻るボタンをタップ可能に
                     mTimer.cancel();
                     mTimer = null;
 
                     playStopButton.setText("再生");
                     backButton.setEnabled(true);
                     forwardButton.setEnabled(true);
+
+                    textView2.setText("");
 
                 }
 
@@ -148,10 +159,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 imageView.setImageURI(getImageUri());
 
+                textView2.setText("");
+
                 break;
         }
 
-        Log.d("ANDROID", "URI : " + getImageUri().toString());
+        Log.d("ANDROID", "URI : " + getImageUri().toString()); // 表示する
+        textView.setText(getImageUri().toString());
 
     }
 
@@ -172,7 +186,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //        }
 //    };
 
-
     private void getContentsInfo() {
 
         // 画像の情報を取得する
@@ -185,13 +198,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 null // ソート (null ソートなし)
         );
 
-        // cursorの初期位置を保持
-//        startPosition = cursor.getPosition();
-
         if(cursor != null){
             if (cursor.moveToFirst()) {
 
                 imageView.setImageURI(getImageUri());
+                textView.setText(getImageUri().toString());
             }
         }
 
